@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="grid.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+
+        <property name="cacheConfiguration">
+            <list>
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="subscriber"/>
+                    <property name="sqlSchema" value="ENRICHMENT"/>
+                    <property name="statisticsEnabled" value="true"/>
+                    <property name="queryDetailMetricsSize" value="100"/>
+                    <property name="sqlEscapeAll" value="true"/>
+                    <property name="queryEntities">
+                        <list>
+                            <bean class="org.apache.ignite.cache.QueryEntity">
+                                <property name="tableName" value="subscriber"/>
+                                <property name="keyType" value="subscriber_key"/>
+                                <property name="valueType" value="subscriber_value"/>
+                                <property name="keyFields">
+                                    <set>
+                                        <value>MSISDN</value>
+                                    </set>
+                                </property>
+                                <property name="fields">
+                                    <map>
+                                        <entry key="MSISDN" value="java.lang.String"/>
+                                        <entry key="marketSegment" value="java.lang.String"/>
+                                        <entry key="subscriberCategory" value="java.lang.String"/>
+                                        <entry key="tariffName" value="java.lang.String"/>
+                                        <entry key="billcycle" value="java.lang.Long"/>
+                                    </map>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="persistenceEnabled" value="true"/>
+                    </bean>
+                </property>
+                <property name="dataRegionConfigurations">
+                    <list>
+                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                            <property name="name" value="enrichmentDataRegion"/>
+                            <property name="maxSize" value="#{2L * 1024 * 1024 * 1024}"/>
+                            <property name="persistenceEnabled" value="true"/>
+                        </bean>
+                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                            <property name="name" value="aggregatesDataRegion"/>
+                            <property name="maxSize" value="#{2L * 1024 * 1024 * 1024}"/>
+                            <property name="persistenceEnabled" value="true"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>
